@@ -1,6 +1,8 @@
 use std::ops::*;
+use std::f32::consts::PI;
 
 use vec3::*;
+use vec3::tests::*;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Mat3f {
@@ -79,5 +81,27 @@ mod tests {
 
     #[test]
     fn multiply() {
+        // TODO
+    }
+
+    #[test]
+    fn rot_x() {
+        assert_vec3f_approx_eq(Vec3f::UNIT_X, Mat3f::rot_x(PI/2.0) * Vec3f::UNIT_X);
+        assert_vec3f_approx_eq(Vec3f::UNIT_Z, Mat3f::rot_x(PI/2.0) * Vec3f::UNIT_Y);
+        assert_vec3f_approx_eq(-Vec3f::UNIT_Y, Mat3f::rot_x(PI/2.0) * Vec3f::UNIT_Z);
+    }
+
+    #[test]
+    fn rot_y() {
+        assert_vec3f_approx_eq(-Vec3f::UNIT_Z, Mat3f::rot_y(PI/2.0) * Vec3f::UNIT_X);
+        assert_vec3f_approx_eq(Vec3f::UNIT_Y, Mat3f::rot_y(PI/2.0) * Vec3f::UNIT_Y);
+        assert_vec3f_approx_eq(Vec3f::UNIT_X, Mat3f::rot_y(PI/2.0) * Vec3f::UNIT_Z);
+    }
+
+    #[test]
+    fn rot_z() {
+        assert_vec3f_approx_eq(Vec3f::UNIT_Y, Mat3f::rot_z(PI/2.0) * Vec3f::UNIT_X);
+        assert_vec3f_approx_eq(-Vec3f::UNIT_X, Mat3f::rot_z(PI/2.0) * Vec3f::UNIT_Y);
+        assert_vec3f_approx_eq(Vec3f::UNIT_Z, Mat3f::rot_z(PI/2.0) * Vec3f::UNIT_Z);
     }
 }

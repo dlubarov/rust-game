@@ -1,8 +1,10 @@
 use std::ops::*;
+use std::f32::consts::PI;
 
 use mat3::*;
 use vec3::*;
 use vec4::*;
+use vec4::tests::*;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Mat4f {
@@ -36,6 +38,19 @@ impl Mul<Mat4f> for Mat4f {
                 self.values[3][0] * other.values[0][3] + self.values[3][1] * other.values[1][3] + self.values[3][2] * other.values[2][3] + self.values[3][3] * other.values[3][3],
             ]
         ] }
+    }
+}
+
+impl Mul<Vec4f> for Mat4f {
+    type Output = Vec4f;
+
+    fn mul(self, v: Vec4f) -> Vec4f {
+        Vec4f {
+            x: self.values[0][0] * v.x + self.values[0][1] * v.y + self.values[0][2] * v.z + self.values[0][3] * v.w,
+            y: self.values[1][0] * v.x + self.values[1][1] * v.y + self.values[1][2] * v.z + self.values[1][3] * v.w,
+            z: self.values[2][0] * v.x + self.values[2][1] * v.y + self.values[2][2] * v.z + self.values[2][3] * v.w,
+            w: self.values[3][0] * v.x + self.values[3][1] * v.y + self.values[3][2] * v.z + self.values[3][3] * v.w,
+        }
     }
 }
 
@@ -93,6 +108,23 @@ mod tests {
     }
 
     #[test]
+    fn rot_x() {
+        assert_vec4f_approx_eq(Vec4f::UNIT_X, Mat4f::rot_x(PI/2.0) * Vec4f::UNIT_X);
+        assert_vec4f_approx_eq(Vec4f::UNIT_Z, Mat4f::rot_x(PI/2.0) * Vec4f::UNIT_Y);
+        assert_vec4f_approx_eq(-Vec4f::UNIT_Y, Mat4f::rot_x(PI/2.0) * Vec4f::UNIT_Z);
+    }
+
+    #[test]
+    fn rot_y() {
+        assert_vec4f_approx_eq(-Vec4f::UNIT_Z, Mat4f::rot_y(PI/2.0) * Vec4f::UNIT_X);
+        assert_vec4f_approx_eq(Vec4f::UNIT_Y, Mat4f::rot_y(PI/2.0) * Vec4f::UNIT_Y);
+        assert_vec4f_approx_eq(Vec4f::UNIT_X, Mat4f::rot_y(PI/2.0) * Vec4f::UNIT_Z);
+    }
+
+    #[test]
     fn rot_z() {
+        assert_vec4f_approx_eq(Vec4f::UNIT_Y, Mat4f::rot_z(PI/2.0) * Vec4f::UNIT_X);
+        assert_vec4f_approx_eq(-Vec4f::UNIT_X, Mat4f::rot_z(PI/2.0) * Vec4f::UNIT_Y);
+        assert_vec4f_approx_eq(Vec4f::UNIT_Z, Mat4f::rot_z(PI/2.0) * Vec4f::UNIT_Z);
     }
 }

@@ -1,5 +1,3 @@
-// TODO make right handed
-
 use vec3::*;
 use mat4::*;
 use std::f32::consts::PI;
@@ -15,13 +13,14 @@ pub fn perspective_matrix(width: f32, height: f32) -> Mat4f {
 
     Mat4f { values: [
         [f * aspect, 0.0, 0.0,                           0.0],
-        [0.0,        f ,  0.0,                           0.0],
-        [0.0,        0.0, (zfar+znear)/(zfar-znear)   , -1.0],
+        [0.0,        f,   0.0,                           0.0],
+        [0.0,        0.0, (zfar+znear)/(zfar-znear),     1.0],
         [0.0,        0.0, (2.0*zfar*znear)/(zfar-znear), 0.0],
     ] }
 }
 
 pub fn view_matrix(position: &[f32; 3], direction: &[f32; 3], up: &[f32; 3]) -> Mat4f {
+    // TODO
     let position = Vec3f { x: 0.0, y: 0.0, z: 0.0 };
     let direction = PI / 4.0;
 

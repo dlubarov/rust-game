@@ -10,6 +10,19 @@ pub struct Vec4f {
 
 impl Vec4f {
     pub const ZERO: Vec4f = Vec4f { x: 0.0, y: 0.0, z: 0.0, w: 0.0 };
+    pub const UNIT_X: Vec4f = Vec4f { x: 1.0, y: 0.0, z: 0.0, w: 0.0 };
+    pub const UNIT_Y: Vec4f = Vec4f { x: 0.0, y: 1.0, z: 0.0, w: 0.0 };
+    pub const UNIT_Z: Vec4f = Vec4f { x: 0.0, y: 0.0, z: 1.0, w: 0.0 };
+    pub const UNIT_W: Vec4f = Vec4f { x: 0.0, y: 0.0, z: 0.0, w: 1.0 };
+
+    // L2-norm
+    pub fn norm(self) -> f32 {
+        self.norm_squared().sqrt()
+    }
+
+    fn norm_squared(self) -> f32 {
+        self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w
+    }
 }
 
 impl Add for Vec4f {
@@ -22,6 +35,14 @@ impl Add for Vec4f {
             z: self.z + other.z,
             w: self.w + other.w,
         }
+    }
+}
+
+impl Sub for Vec4f {
+    type Output = Vec4f;
+
+    fn sub(self, other: Vec4f) -> Vec4f {
+        self + -other
     }
 }
 
@@ -47,14 +68,28 @@ impl Neg for Vec4f {
 }
 
 #[cfg(test)]
-mod tests {
+pub mod tests {
     use super::*;
 
     #[test]
     fn add() {
+        assert_vec4f_approx_eq(
+            Vec4f { x: 6.0, y: 8.0, z: 11.0, w: 15.0 },
+            Vec4f { x: 1.0, y: 2.0, z: 3.0, w: 4.0 } + Vec4f { x: 5.0, y: 6.0, z: 8.0, w: 11.0 });
     }
 
     #[test]
     fn scale() {
+        assert_vec4f_approx_eq(
+            Vec4f { x: 2.5, y: 5.0, z: 7.5, w: 10.0 },
+            Vec4f { x: 1.0, y: 2.0, z: 3.0, w: 4.0 } * 2.5);
+    }
+
+    pub fn assert_vec4f_approx_eq(a: Vec4f, b: Vec4f) {
+        let eps = 1.0e-6;
+        assert!((a - b).norm() < eps, r#"assertion failed: `(left ~= right)`
+  left: `{:?}`
+ right: `{:?}"#,
+                a, b);
     }
 }
