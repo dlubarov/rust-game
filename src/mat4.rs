@@ -4,7 +4,6 @@ use std::f32::consts::PI;
 use mat3::*;
 use vec3::*;
 use vec4::*;
-use vec4::tests::*;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Mat4f {
@@ -102,6 +101,7 @@ impl Mat4f {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use vec4::tests::*;
 
     #[test]
     fn multiply() {

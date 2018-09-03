@@ -2,7 +2,6 @@ use std::ops::*;
 use std::f32::consts::PI;
 
 use vec3::*;
-use vec3::tests::*;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Mat3f {
@@ -78,6 +77,7 @@ impl Mul<Vec3f> for Mat3f {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use vec3::tests::*;
 
     #[test]
     fn multiply() {

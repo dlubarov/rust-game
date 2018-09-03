@@ -15,7 +15,7 @@ impl Add for Vec2f {
 }
 
 #[cfg(test)]
-mod tests {
+pub mod tests {
     use super::*;
 
     #[test]
