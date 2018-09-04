@@ -7,50 +7,8 @@ use vec4::*;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Mat4f {
+    // Row major values
     pub values: [[f32; 4]; 4],
-}
-
-impl Mul<Mat4f> for Mat4f {
-    type Output = Mat4f;
-
-    fn mul(self, other: Mat4f) -> Mat4f {
-        Mat4f { values: [
-            [
-                self.values[0][0] * other.values[0][0] + self.values[0][1] * other.values[1][0] + self.values[0][2] * other.values[2][0] + self.values[0][3] * other.values[3][0],
-                self.values[0][0] * other.values[0][1] + self.values[0][1] * other.values[1][1] + self.values[0][2] * other.values[2][1] + self.values[0][3] * other.values[3][1],
-                self.values[0][0] * other.values[0][2] + self.values[0][1] * other.values[1][2] + self.values[0][2] * other.values[2][2] + self.values[0][3] * other.values[3][2],
-                self.values[0][0] * other.values[0][3] + self.values[0][1] * other.values[1][3] + self.values[0][2] * other.values[2][3] + self.values[0][3] * other.values[3][3],
-            ], [
-                self.values[1][0] * other.values[0][0] + self.values[1][1] * other.values[1][0] + self.values[1][2] * other.values[2][0] + self.values[1][3] * other.values[3][0],
-                self.values[1][0] * other.values[0][1] + self.values[1][1] * other.values[1][1] + self.values[1][2] * other.values[2][1] + self.values[1][3] * other.values[3][1],
-                self.values[1][0] * other.values[0][2] + self.values[1][1] * other.values[1][2] + self.values[1][2] * other.values[2][2] + self.values[1][3] * other.values[3][2],
-                self.values[1][0] * other.values[0][3] + self.values[1][1] * other.values[1][3] + self.values[1][2] * other.values[2][3] + self.values[1][3] * other.values[3][3],
-            ], [
-                self.values[2][0] * other.values[0][0] + self.values[2][1] * other.values[1][0] + self.values[2][2] * other.values[2][0] + self.values[2][3] * other.values[3][0],
-                self.values[2][0] * other.values[0][1] + self.values[2][1] * other.values[1][1] + self.values[2][2] * other.values[2][1] + self.values[2][3] * other.values[3][1],
-                self.values[2][0] * other.values[0][2] + self.values[2][1] * other.values[1][2] + self.values[2][2] * other.values[2][2] + self.values[2][3] * other.values[3][2],
-                self.values[2][0] * other.values[0][3] + self.values[2][1] * other.values[1][3] + self.values[2][2] * other.values[2][3] + self.values[2][3] * other.values[3][3],
-            ], [
-                self.values[3][0] * other.values[0][0] + self.values[3][1] * other.values[1][0] + self.values[3][2] * other.values[2][0] + self.values[3][3] * other.values[3][0],
-                self.values[3][0] * other.values[0][1] + self.values[3][1] * other.values[1][1] + self.values[3][2] * other.values[2][1] + self.values[3][3] * other.values[3][1],
-                self.values[3][0] * other.values[0][2] + self.values[3][1] * other.values[1][2] + self.values[3][2] * other.values[2][2] + self.values[3][3] * other.values[3][2],
-                self.values[3][0] * other.values[0][3] + self.values[3][1] * other.values[1][3] + self.values[3][2] * other.values[2][3] + self.values[3][3] * other.values[3][3],
-            ]
-        ] }
-    }
-}
-
-impl Mul<Vec4f> for Mat4f {
-    type Output = Vec4f;
-
-    fn mul(self, v: Vec4f) -> Vec4f {
-        Vec4f {
-            x: self.values[0][0] * v.x + self.values[0][1] * v.y + self.values[0][2] * v.z + self.values[0][3] * v.w,
-            y: self.values[1][0] * v.x + self.values[1][1] * v.y + self.values[1][2] * v.z + self.values[1][3] * v.w,
-            z: self.values[2][0] * v.x + self.values[2][1] * v.y + self.values[2][2] * v.z + self.values[2][3] * v.w,
-            w: self.values[3][0] * v.x + self.values[3][1] * v.y + self.values[3][2] * v.z + self.values[3][3] * v.w,
-        }
-    }
 }
 
 impl Mat4f {
@@ -96,6 +54,62 @@ impl Mat4f {
     pub fn translation_vec(delta: Vec3f) -> Self {
         Mat4f::translation(delta.x, delta.y, delta.z)
     }
+
+    pub fn rows(self) -> [[f32; 4]; 4] {
+        self.values
+    }
+
+    pub fn columns(self) -> [[f32; 4]; 4] {
+        [
+            [self.values[0][0], self.values[1][0], self.values[2][0], self.values[3][0]],
+            [self.values[0][1], self.values[1][1], self.values[2][1], self.values[3][1]],
+            [self.values[0][2], self.values[1][2], self.values[2][2], self.values[3][2]],
+            [self.values[0][3], self.values[1][3], self.values[2][3], self.values[3][3]],
+        ]
+    }
+}
+
+impl Mul<Mat4f> for Mat4f {
+    type Output = Mat4f;
+
+    fn mul(self, other: Mat4f) -> Mat4f {
+        Mat4f { values: [
+            [
+                self.values[0][0] * other.values[0][0] + self.values[0][1] * other.values[1][0] + self.values[0][2] * other.values[2][0] + self.values[0][3] * other.values[3][0],
+                self.values[0][0] * other.values[0][1] + self.values[0][1] * other.values[1][1] + self.values[0][2] * other.values[2][1] + self.values[0][3] * other.values[3][1],
+                self.values[0][0] * other.values[0][2] + self.values[0][1] * other.values[1][2] + self.values[0][2] * other.values[2][2] + self.values[0][3] * other.values[3][2],
+                self.values[0][0] * other.values[0][3] + self.values[0][1] * other.values[1][3] + self.values[0][2] * other.values[2][3] + self.values[0][3] * other.values[3][3],
+            ], [
+                self.values[1][0] * other.values[0][0] + self.values[1][1] * other.values[1][0] + self.values[1][2] * other.values[2][0] + self.values[1][3] * other.values[3][0],
+                self.values[1][0] * other.values[0][1] + self.values[1][1] * other.values[1][1] + self.values[1][2] * other.values[2][1] + self.values[1][3] * other.values[3][1],
+                self.values[1][0] * other.values[0][2] + self.values[1][1] * other.values[1][2] + self.values[1][2] * other.values[2][2] + self.values[1][3] * other.values[3][2],
+                self.values[1][0] * other.values[0][3] + self.values[1][1] * other.values[1][3] + self.values[1][2] * other.values[2][3] + self.values[1][3] * other.values[3][3],
+            ], [
+                self.values[2][0] * other.values[0][0] + self.values[2][1] * other.values[1][0] + self.values[2][2] * other.values[2][0] + self.values[2][3] * other.values[3][0],
+                self.values[2][0] * other.values[0][1] + self.values[2][1] * other.values[1][1] + self.values[2][2] * other.values[2][1] + self.values[2][3] * other.values[3][1],
+                self.values[2][0] * other.values[0][2] + self.values[2][1] * other.values[1][2] + self.values[2][2] * other.values[2][2] + self.values[2][3] * other.values[3][2],
+                self.values[2][0] * other.values[0][3] + self.values[2][1] * other.values[1][3] + self.values[2][2] * other.values[2][3] + self.values[2][3] * other.values[3][3],
+            ], [
+                self.values[3][0] * other.values[0][0] + self.values[3][1] * other.values[1][0] + self.values[3][2] * other.values[2][0] + self.values[3][3] * other.values[3][0],
+                self.values[3][0] * other.values[0][1] + self.values[3][1] * other.values[1][1] + self.values[3][2] * other.values[2][1] + self.values[3][3] * other.values[3][1],
+                self.values[3][0] * other.values[0][2] + self.values[3][1] * other.values[1][2] + self.values[3][2] * other.values[2][2] + self.values[3][3] * other.values[3][2],
+                self.values[3][0] * other.values[0][3] + self.values[3][1] * other.values[1][3] + self.values[3][2] * other.values[2][3] + self.values[3][3] * other.values[3][3],
+            ]
+        ] }
+    }
+}
+
+impl Mul<Vec4f> for Mat4f {
+    type Output = Vec4f;
+
+    fn mul(self, v: Vec4f) -> Vec4f {
+        Vec4f {
+            x: self.values[0][0] * v.x + self.values[0][1] * v.y + self.values[0][2] * v.z + self.values[0][3] * v.w,
+            y: self.values[1][0] * v.x + self.values[1][1] * v.y + self.values[1][2] * v.z + self.values[1][3] * v.w,
+            z: self.values[2][0] * v.x + self.values[2][1] * v.y + self.values[2][2] * v.z + self.values[2][3] * v.w,
+            w: self.values[3][0] * v.x + self.values[3][1] * v.y + self.values[3][2] * v.z + self.values[3][3] * v.w,
+        }
+    }
 }
 
 #[cfg(test)]
@@ -105,6 +119,13 @@ mod tests {
 
     #[test]
     fn multiply() {
+    }
+
+    #[test]
+    fn translation() {
+        assert_vec4f_approx_eq(
+            Vec4f { x: 9.0, y: 14.0, z: 18.0, w: 1.0 },
+            Mat4f::translation(7.0, 11.0, 13.0) * Vec4f { x: 2.0, y: 3.0, z: 5.0, w: 1.0 });
     }
 
     #[test]

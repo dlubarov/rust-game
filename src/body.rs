@@ -3,7 +3,7 @@ use glium::*;
 
 pub trait Body {
     fn name() -> &'static str where Self: Sized;
-    fn draw(&self, target: &mut Frame, program: &Program);
+    fn draw(&self, target: &mut Frame, program: &Program, view: &Mat4f, projection: &Mat4f);
 }
 
 #[derive(Default)]

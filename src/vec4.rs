@@ -15,6 +15,10 @@ impl Vec4f {
     pub const UNIT_Z: Vec4f = Vec4f { x: 0.0, y: 0.0, z: 1.0, w: 0.0 };
     pub const UNIT_W: Vec4f = Vec4f { x: 0.0, y: 0.0, z: 0.0, w: 1.0 };
 
+    pub fn normalized(self) -> Vec4f {
+        self / self.norm()
+    }
+
     // L2-norm
     pub fn norm(self) -> f32 {
         self.norm_squared().sqrt()
@@ -55,6 +59,19 @@ impl Mul<f32> for Vec4f {
             y: self.y * s,
             z: self.z * s,
             w: self.w * s,
+        }
+    }
+}
+
+impl Div<f32> for Vec4f {
+    type Output = Vec4f;
+
+    fn div(self, s: f32) -> Vec4f {
+        Vec4f {
+            x: self.x / s,
+            y: self.y / s,
+            z: self.z / s,
+            w: self.w / s,
         }
     }
 }

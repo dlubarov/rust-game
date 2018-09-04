@@ -8,18 +8,28 @@ mod human;
 mod mat3;
 mod mat4;
 mod mesh;
+mod player;
 mod vec2;
 mod vec3;
 mod vec4;
 mod vertex;
 
 use std::time::Duration;
+use std::collections::HashSet;
 use std::thread;
 use glium::glutin;
 use glium::Surface;
+use glutin::Event;
+use glutin::WindowEvent;
+use glutin::VirtualKeyCode;
+use glutin::ElementState;
 
-use body::Body;
-use human::Human;
+use body::*;
+use camera::*;
+use human::*;
+use player::*;
+use vec2::*;
+use vec3::*;
 
 const VERTEX_SHADER_SRC: &str = r#"
     #version 140
@@ -58,29 +68,57 @@ fn main() {
     let window = glutin::WindowBuilder::new()
         .with_dimensions((1024, 768).into())
         .with_title("Hello world");
-    let context = glutin::ContextBuilder::new().with_depth_buffer(24);
+    // TODO uncomment
+    let context = glutin::ContextBuilder::new();//.with_depth_buffer(24);
     let display = glium::Display::new(window, context, &events_loop).unwrap();
     let program = glium::Program::from_source(&display, VERTEX_SHADER_SRC, FRAGMENT_SHADER_SRC, None).unwrap();
 
-    let mut player_body = Human::new(&display);
+    let mut player = Player { position: Vec2f { x: 0.0, y: 0.0 }, direction: 0.0 };
+    let mut npc_body = Human::new(&display);
+
+    let mut pressed_keys = HashSet::new();
 
     let mut closed = false;
     while !closed {
         events_loop.poll_events(|ev| {
             match ev {
-                glutin::Event::WindowEvent { event, .. } => match event {
-                    glutin::WindowEvent::CloseRequested => closed = true,
+                Event::WindowEvent { event, .. } => match event {
+                    WindowEvent::CloseRequested => closed = true,
+                    WindowEvent::KeyboardInput { input, .. } => {
+                        if let Some(key) = input.virtual_keycode {
+                            let pressed = input.state == ElementState::Pressed;
+                            if pressed {
+                                pressed_keys.insert(key);
+                            } else {
+                                pressed_keys.remove(&key);
+                            }
+
+                            if key == VirtualKeyCode::Escape {
+                                closed = true;
+                            }
+                        }
+                    }
                     _ => (),
                 },
                 _ => (),
             }
         });
 
-        player_body.forward();
+        player.physics(&pressed_keys);
+
+        // Temporary controls for moving the NPC around.
+        if pressed_keys.contains(&VirtualKeyCode::T) {
+            npc_body.forward();
+        }
 
         let mut target = display.draw();
+        let pos = Vec3f { x: player.position.x, y: 0.0, z: player.position.y };
+        let view = view_matrix(&pos, player.direction);
+        let (width, height) = target.get_dimensions();
+        let projection = perspective_matrix(width as f32, height as f32);
+
         target.clear_color_and_depth((1.0, 0.9, 0.9, 1.0), 1.0);
-        player_body.draw(&mut target, &program);
+        npc_body.draw(&mut target, &program, &view, &projection);
         target.finish().unwrap();
 
         thread::sleep(Duration::from_millis(10))

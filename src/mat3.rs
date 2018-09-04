@@ -5,6 +5,7 @@ use vec3::*;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Mat3f {
+    // Row major values
     pub values: [[f32; 3]; 3],
 }
 
@@ -37,6 +38,18 @@ impl Mat3f {
             [s, c, 0.0],
             [0.0, 0.0, 1.0],
         ] }
+    }
+
+    pub fn rows(self) -> [[f32; 3]; 3] {
+        self.values
+    }
+
+    pub fn columns(self) -> [[f32; 3]; 3] {
+        [
+            [self.values[0][0], self.values[1][0], self.values[2][0]],
+            [self.values[0][1], self.values[1][1], self.values[2][1]],
+            [self.values[0][2], self.values[1][2], self.values[2][2]],
+        ]
     }
 }
 

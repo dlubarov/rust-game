@@ -4,11 +4,11 @@ use glium::*;
 use glium::index::*;
 use body::*;
 use vec3::*;
+use vec4::*;
 use mat4::*;
 use cylinder::*;
 use vertex::*;
 use mesh::*;
-use camera::*;
 
 const NECK_LENGTH: f32 = 0.2;
 const TORSO_LENGTH: f32 = 0.8;
@@ -46,7 +46,7 @@ impl Human {
             left_lower_leg: MeshObjects::create(display, &make_cylinder(0, 0.0, LOWER_LEG_LENGTH, 0.1)),
         };
         Human {
-            pos: Vec3f { x: 9.0, y: 9.0, z: 9.0 },
+            pos: Vec3f { x: 0.0, y: 0.0, z: -2.0 },
             joints: Default::default(),
             objects,
         }
@@ -59,7 +59,7 @@ impl Human {
     }
 
     pub fn forward(&mut self) {
-        //self.joints.left_knee.yaw += 0.03;
+        self.joints.left_knee.yaw += 0.03;
     }
 
     pub fn backward(&mut self) {
@@ -106,14 +106,12 @@ impl Body for Human {
         "human"
     }
 
-    fn draw(&self, target: &mut Frame, program: &Program) {
-        // Draw lower legs.
-        let (width, height) = target.get_dimensions();
+    fn draw(&self, target: &mut Frame, program: &Program, view: &Mat4f, projection: &Mat4f) {
+        // Draw left lower leg.
         let model = self.left_knee_transform();
-        let view = view_matrix(&[0.0, 0.0, 0.0], &[1.0, 1.0, 1.0], &[0.0, 1.0, 0.0]);
         let uniforms = uniform! {
-            modelview: (view * model).values,
-            projection: perspective_matrix(width as f32, height as f32).values,
+            modelview: (*view * model).columns(),
+            projection: (*projection).columns(),
         };
         target.draw(&self.objects.left_lower_leg.vertex_buffer,
                     &self.objects.left_lower_leg.index_buffer,

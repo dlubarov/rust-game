@@ -13,6 +13,10 @@ impl Vec3f {
     pub const UNIT_Y: Vec3f = Vec3f { x: 0.0, y: 1.0, z: 0.0 };
     pub const UNIT_Z: Vec3f = Vec3f { x: 0.0, y: 0.0, z: 1.0 };
 
+    pub fn normalized(self) -> Vec3f {
+        self / self.norm()
+    }
+
     // L2-norm
     pub fn norm(self) -> f32 {
         self.norm_squared().sqrt()
@@ -51,6 +55,18 @@ impl Mul<f32> for Vec3f {
             x: self.x * s,
             y: self.y * s,
             z: self.z * s,
+        }
+    }
+}
+
+impl Div<f32> for Vec3f {
+    type Output = Vec3f;
+
+    fn div(self, s: f32) -> Vec3f {
+        Vec3f {
+            x: self.x / s,
+            y: self.y / s,
+            z: self.z / s,
         }
     }
 }
