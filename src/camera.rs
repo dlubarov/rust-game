@@ -22,6 +22,12 @@ pub fn perspective_matrix(width: f32, height: f32) -> Mat4f {
 
 pub fn view_matrix(position: &Vec3f, direction: f32) -> Mat4f {
     let translation = Mat4f::translation_vec(-*position);
-    let rotation = Mat4f::rot_y(-direction);
-    rotation * translation
+    let rot_to_pos_x = Mat4f::rot_z(-direction);
+
+    // +x forward, +z up -> -z forward, +x up
+    let rot_to_neg_z = Mat4f::rot_y(PI / 2.0);
+    // -z forward, +x up -> -z forward, +y up
+    let y_up = Mat4f::rot_z(PI / 2.0);
+
+    y_up * rot_to_neg_z * rot_to_pos_x * translation
 }

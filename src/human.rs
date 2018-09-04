@@ -1,5 +1,7 @@
 #[macro_use]
 
+// TODO: This was written with +y being up; need to modify to reflect +z being up.
+
 use glium::*;
 use glium::index::*;
 use body::*;

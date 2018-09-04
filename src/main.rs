@@ -112,7 +112,8 @@ fn main() {
         }
 
         let mut target = display.draw();
-        let pos = Vec3f { x: player.position.x, y: 0.0, z: player.position.y };
+        // TODO: make camera height 1.5.
+        let pos = Vec3f { x: player.position.x, y: player.position.y, z: 0.5 };
         let view = view_matrix(&pos, player.direction);
         let (width, height) = target.get_dimensions();
         let projection = perspective_matrix(width as f32, height as f32);

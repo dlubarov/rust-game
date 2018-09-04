@@ -19,18 +19,16 @@ impl Player {
 
         let mut step_dir = Vec2f::ZERO;
         if forward ^ back {
-            let forward_dir = Vec2f { x: self.direction.cos(), y: -self.direction.sin() };
+            let forward_dir = Vec2f { x: self.direction.cos(), y: self.direction.sin() };
             step_dir += forward_dir * (forward as i8 - back as i8) as f32;
         }
         if left ^ right {
-            let left_dir = Vec2f { x: -self.direction.sin(), y: -self.direction.cos() };
+            let left_dir = Vec2f { x: -self.direction.sin(), y: self.direction.cos() };
             step_dir += left_dir * (left as i8 - right as i8) as f32;
         }
 
-        let displacement = match step_dir {
-            d if d == Vec2f::ZERO => Vec2f::ZERO,
-            _ => step_dir.normalized() * SPEED,
-        };
-        self.position += displacement;
+        if step_dir != Vec2f::ZERO {
+            self.position += step_dir.normalized() * SPEED;
+        }
     }
 }
